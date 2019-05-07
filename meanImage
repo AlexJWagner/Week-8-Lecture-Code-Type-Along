@@ -1,0 +1,55 @@
+#include<stdio.h>
+
+/*
+ * this a function for reading a file, it takes the file name, the x & y resolutions
+ */
+void readPPMHeader(char *filename, int *xres, int *yres);
+
+main()
+{
+   int xres, yres;
+   readPPMHeader("", &xres, &yres)
+   
+   int image[xres][yres][3];      //this sets up 3 arrays for the xres, yres, and 3 numbers
+
+    //read the image data
+    FILE *input;  
+    input = fopen(filename, "r");
+    
+    //read the header into dummy variables
+    {
+        int tmp;
+        fscanf("p3\n%d %d\n%d", &tmp, &tmp, &tmp);
+    }
+    
+    int x, y;
+    for(y = 0; y < yres; y++){
+        for (x = 0; x < xres; x++){
+            fscanf(input, "%d\n%d\n%\n", &image[x][y][0], &image[x][y][1], &image[x][y][2]);
+        }
+    }
+    //calculate the mean value
+    float rT = 0, bT = 0, gT = 0; //red / blue / green Total
+    for(y = 0; y < yres; y++){
+        for (x = 0; x < xres; x++){
+            rT += image[x][y][0];
+            gT += image[x][y][1];
+            bT += image[x][y][2];
+        }
+    }
+    //these are now mean values not total values
+    rT /= (xres*yres);
+    gT /= (xres*yres);
+    bT /= (xres*yres);
+    
+    printf("%f %f %f", rT, gT, bT);
+}
+
+void readPPMHeader(char *filename, int *xres, int *yres){
+    FILE *input;  
+    input = fopen(filename, "r");               //filename variable. "r" is for reading
+    
+    fscanf(input, "p3\n%d %d", xres, yres)      //input is the file. "p3\n%d %d" is the file format.
+    
+    fclose(input);
+}
